@@ -3,7 +3,7 @@ import * as request from 'supertest';
 import { INestApplication, ValidationPipe } from '@nestjs/common';
 import { Test, TestingModule } from "@nestjs/testing";
 
-import { ConfigModule } from '@nestjs/config';
+import { ConfigModule, ConfigService } from '@nestjs/config';
 import { DuplicatedPlanetException } from '../../src/planet/exceptions/planet/duplicated.planet.exception';
 import { PlanetUtils } from "./utils/planets.utils";
 import { PlanetsController } from "../../src/planet/planet.controller";
@@ -28,12 +28,12 @@ describe('AppController', () => {
             controllers: [ PlanetsController ]
         }).compile()
 
-        planetsController = moduleRef.get(PlanetsController);
-        planetsService = moduleRef.get(PlanetsService);
+        planetsController = await moduleRef.resolve(PlanetsController);
+        planetsService = await moduleRef.resolve(PlanetsService);
         
         app = moduleRef.createNestApplication();
         
-        const validateOptions = app.get('ConfigService').get('validateOptions')
+        const validateOptions = app.get(ConfigService).get('validateOptions')
         app.useGlobalPipes(new ValidationPipe(validateOptions))
         
         await app.init();        

@@ -4,8 +4,6 @@ export default () => ({
     },
     mongoose: {
         uri: process.env.MONGO_URI,
-        useNewUrlParser: true, 
-        useCreateIndex: true,
         user: process.env.MONGO_USER,
         pass: process.env.MONGO_PASS,
         authSource: 'admin'

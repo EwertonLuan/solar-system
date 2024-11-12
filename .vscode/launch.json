@@ -18,8 +18,6 @@
             "sourceMaps": true,
             "envFile": "${workspaceFolder}/.env",
             "cwd": "${workspaceRoot}",
-            "console": "integratedTerminal",
-            "protocol": "inspector"
-        }
+            "console": "integratedTerminal"        }
     ]
   }
