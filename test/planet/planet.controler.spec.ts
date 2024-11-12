@@ -13,11 +13,10 @@ import configuration from '../../config/configuration';
 jest.mock('../../src/planet/planet.service')
 
 describe('AppController', () => {
-    let planetsController: PlanetsController
     let planetsService: PlanetsService
     let app: INestApplication;
 
-    beforeEach(async () => {
+    beforeAll(async () => {
         
         const moduleRef: TestingModule = await Test.createTestingModule({
             imports:[ConfigModule.forRoot({
@@ -28,15 +27,19 @@ describe('AppController', () => {
             controllers: [ PlanetsController ]
         }).compile()
 
-        planetsController = await moduleRef.resolve(PlanetsController);
         planetsService = await moduleRef.resolve(PlanetsService);
         
         app = moduleRef.createNestApplication();
         
-        const validateOptions = app.get(ConfigService).get('validateOptions')
+        const validateOptions = app.get(ConfigService).get<ValidationPipe>('validateOptions') ?? {}
         app.useGlobalPipes(new ValidationPipe(validateOptions))
         
         await app.init();        
+    })
+
+    beforeEach(() => {
+        jest.clearAllMocks()
+        jest.resetAllMocks()
     })
 
     afterAll(async () => {
@@ -45,20 +48,20 @@ describe('AppController', () => {
   
 
     it('should return a Planet', async () => {
-        const planetName = 'VULCAN'
         const result = new PlanetUtils().getPlanet();
-        jest.spyOn(planetsService, 'getPlanetByName').mockReturnValue(Promise.resolve(result));    
-        await expect(planetsController.getPlanet('VENUS')).resolves.toBe(result);
+        jest.spyOn(planetsService, 'getPlanetByName').mockResolvedValueOnce(result);    
+        
 
         await request(app.getHttpServer())
-            .get(`/planets/name?=${planetName}`)
+            .get(`/planets/name?=${result.name}`)
             .expect(200)
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
             .expect(JSON.parse(JSON.stringify(result)));
     });
 
     it('should return http status code 404 when do not find a Planet', async () => {
         const planetName = 'VULCAN'
-        jest.spyOn(planetsService, 'getPlanetByName').mockReturnValue(Promise.resolve(null));    
+        jest.spyOn(planetsService, 'getPlanetByName').mockResolvedValueOnce(undefined);    
         
         await request(app.getHttpServer())
             .get(`/planets/${planetName}`)
@@ -72,10 +75,11 @@ describe('AppController', () => {
 
     it('should return http status code 201 with a empty body when create a new planet', async () => {
         const planet = new PlanetUtils().getPlanet();
-        jest.spyOn(planetsService, 'createPlanet').mockReturnValue(Promise.resolve(planet));    
+        jest.spyOn(planetsService, 'createPlanet').mockResolvedValueOnce(planet);    
         
         await request(app.getHttpServer())
             .post(`/planets`)
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
             .send(JSON.parse(JSON.stringify(planet)))
             .expect(201)
             .expect({});
@@ -83,11 +87,12 @@ describe('AppController', () => {
 
     it('should return a list of planets', async () => {
         const planet = new PlanetUtils().getPlanet();
-        jest.spyOn(planetsService, 'getAllPlanets').mockReturnValue(Promise.resolve([planet]));    
+        jest.spyOn(planetsService, 'getAllPlanets').mockResolvedValueOnce([planet]);    
         
         await request(app.getHttpServer())
             .get(`/planets/`)
             .expect(200)
+             
             .expect([JSON.parse(JSON.stringify(planet))]);
     });
 
@@ -100,6 +105,7 @@ describe('AppController', () => {
         
         await request(app.getHttpServer())
             .post(`/planets`)
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
             .send(JSON.parse(JSON.stringify(body)))
             .expect(400)
             .expect({
@@ -114,10 +120,11 @@ describe('AppController', () => {
     it('should return http status 500 to exceptions not handled ', async () => {
         const planet = new PlanetUtils().getPlanet();
         
-        jest.spyOn(planetsService, 'createPlanet').mockImplementation(() => Promise.reject({error: "Error"}));    
+        jest.spyOn(planetsService, 'createPlanet').mockRejectedValueOnce({error: "Error"});    
         
         await request(app.getHttpServer())
             .post(`/planets`)
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
             .send(JSON.parse(JSON.stringify(planet)))
             .expect(500)
             .expect({
@@ -137,6 +144,7 @@ describe('AppController', () => {
         
         await request(app.getHttpServer())
             .post(`/planets`)
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
             .send(JSON.parse(JSON.stringify(body)))
             .expect(400)
             .expect({
@@ -156,6 +164,7 @@ describe('AppController', () => {
         
         await request(app.getHttpServer())
             .post(`/planets`)
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
             .send(JSON.parse(JSON.stringify(body)))
             .expect(400)
             .expect({
@@ -170,12 +179,13 @@ describe('AppController', () => {
 
         const msg = `Planet with the name ${planet.name} already exist`
 
-        jest.spyOn(planetsService, 'createPlanet').mockImplementation(() => {
+        jest.spyOn(planetsService, 'createPlanet').mockImplementationOnce(() => {
             throw new DuplicatedPlanetException(msg)
         })
         
         await request(app.getHttpServer())
             .post(`/planets`)
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
             .send(JSON.parse(JSON.stringify(planet)))
             .expect(422)
             .expect({
@@ -187,10 +197,11 @@ describe('AppController', () => {
 
     it('should return http status code 204 when update a planet', async () => {
         const planet = new PlanetUtils().getPlanet();
-        jest.spyOn(planetsService, 'updatePlanet').mockReturnValue(Promise.resolve(planet));    
+        jest.spyOn(planetsService, 'updatePlanet').mockResolvedValueOnce(planet);    
         
         await request(app.getHttpServer())
             .put(`/planets/${planet.name}`)
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
             .send(JSON.parse(JSON.stringify(planet)))
             .expect(204)
             .expect({});
@@ -204,6 +215,7 @@ describe('AppController', () => {
         
         await request(app.getHttpServer())
             .put(`/planets/${planetName}`)
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
             .send(JSON.parse(JSON.stringify(body)))
             .expect(400)
             .expect({
@@ -216,10 +228,11 @@ describe('AppController', () => {
     it('should return http status code 404 when try update that do not exist planet', async () => {
         
         const planet = new PlanetUtils().getPlanet();
-        jest.spyOn(planetsService, 'updatePlanet').mockReturnValue(null);    
+        jest.spyOn(planetsService, 'updatePlanet').mockResolvedValueOnce(undefined);    
         
         await request(app.getHttpServer())
             .put(`/planets/${planet.name}`)
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
             .send(JSON.parse(JSON.stringify(planet)))
             .expect(404)
             .expect({

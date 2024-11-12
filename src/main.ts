@@ -3,12 +3,14 @@ import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { AppModule } from './app.module';
 import { NestFactory } from '@nestjs/core';
 import { ValidationPipe } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 
 async function bootstrap() {
     const app = await NestFactory.create(AppModule);
-    const config = app.get('ConfigService')
+    const config = app.get(ConfigService)
 
-    const validateOptions = config.get('validateOptions')
+    const validateOptions = config.get<ValidationPipe>('validateOptions') ?? {}
+    
     app.useGlobalPipes(new ValidationPipe(validateOptions));
 
   
@@ -22,9 +24,10 @@ async function bootstrap() {
     const document = SwaggerModule.createDocument(app, options);
     SwaggerModule.setup('swagger', app, document);
   
-    const port = config.get('app.port');
+    const port = config.get<string>('app.port') ?? '3000';
     await app.listen(port, () => {
         console.log(`Server running on port ${port}`)
     });
 }
-bootstrap();
+
+void bootstrap();

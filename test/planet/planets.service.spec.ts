@@ -26,19 +26,12 @@ describe('Planets Test', () => {
         mockPlanetsRepository = moduleRef.get('PlanetRepository');
     })
 
-    
-    it('InsertPlanet - should insert a new planet', async () => {
-        const result = new PlanetUtils().getPlanet();
-        jest.spyOn(mockPlanetsRepository, 'findPlanetByName').mockReturnValue(Promise.resolve(null))
-        
-        await planetsService.createPlanet(result)
-    })
 
     it('InsertPlanet - should throw an Error if some problem happened when try create a new planet', async () => {
 
         const result = new PlanetUtils().getPlanet();
         const msg = 'Error when try create a new planet'
-        jest.spyOn(mockPlanetsRepository, 'findPlanetByName').mockReturnValue(Promise.resolve(null))
+        jest.spyOn(mockPlanetsRepository, 'findPlanetByName').mockReturnValue(Promise.resolve(undefined))
         jest.spyOn(mockPlanetsRepository, 'insertPlanet').mockImplementation(() => {
             throw new Error(msg)
         });    

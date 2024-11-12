@@ -1,7 +1,7 @@
  import { PlanetDto } from "../../../src/planet/model/planet.model.dto"
 
 export class PlanetUtils {
-    public getPlanet(name = 'MERCURY') {
+    public getPlanet(name = 'MERCURY'): PlanetDto {
         const planet =  new PlanetDto()
         
         planet.name= name
@@ -19,9 +19,11 @@ export class PlanetsRepositoryMock {
         return Promise.resolve([])
     }
     
-    insertPlanet(){}
+    insertPlanet(){
+        return undefined
+    }
     
-    findPlanetByName(): Promise<PlanetDto>{
+    findPlanetByName(): Promise<PlanetDto | undefined>{
         const planet = new PlanetUtils().getPlanet()
         return Promise.resolve(planet)
     }

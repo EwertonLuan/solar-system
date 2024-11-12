@@ -14,7 +14,7 @@ import configuration from '../config/configuration';
         }),
         MongooseModule.forRootAsync({
             imports: [ConfigModule],
-            useFactory: async (configService: ConfigService) => configService.get('mongoose'),
+            useFactory: async (configService: ConfigService) => configService.get('mongoose') ?? {},
             inject: [ConfigService],
         }),
         PlanetModule,

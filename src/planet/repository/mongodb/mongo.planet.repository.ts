@@ -20,15 +20,15 @@ export class MongoPlanetRepository implements PlanetRepository {
         return planetsConverted
     }
 
-    async findPlanetByName(name: string): Promise<PlanetDto> {
+    async findPlanetByName(name: string): Promise<PlanetDto | undefined> {
 
         const result = await this.planetModel.findOne({name})
-        const planetConverted = result ? this.planetDtoConverter.converterPlanetToDto(result) : null
+        const planetConverted = result ? this.planetDtoConverter.converterPlanetToDto(result) : undefined
 
         return planetConverted
     }
     
-    async insertPlanet(planet: PlanetDto): Promise<PlanetDto> {
+    async insertPlanet(planet: PlanetDto): Promise<PlanetDto | undefined> {
         
         const newPlanet = new this.planetModel({
             name: planet.name,
@@ -38,14 +38,14 @@ export class MongoPlanetRepository implements PlanetRepository {
         })
 
         const result = await newPlanet.save()
-        const planetConverted = result ? this.planetDtoConverter.converterPlanetToDto(result) : null
+        const planetConverted = result ? this.planetDtoConverter.converterPlanetToDto(result) : undefined
 
         return planetConverted
     }
 
-    async updatePlanet(name: string, valuesToUpdate: PlanetUpdateDto): Promise<PlanetDto> {
+    async updatePlanet(name: string, valuesToUpdate: PlanetUpdateDto): Promise<PlanetDto | undefined> {
         const result = await this.planetModel.findOneAndUpdate({name: name}, valuesToUpdate, {new:true})
-        const planetConverted = result ? this.planetDtoConverter.converterPlanetToDto(result) : null        
+        const planetConverted = result ? this.planetDtoConverter.converterPlanetToDto(result) : undefined        
         
         return planetConverted
     }

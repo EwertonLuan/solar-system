@@ -101,7 +101,7 @@ describe('MongoPlanetRepository Test', () => {
     await expect(mongoPlanetRepository.updatePlanet(planet1.name, valuesToUpdate)).resolves.toEqual(planetUpdated)
   })
 
-  it('updatePlanet - should not update if the name do not match', async () => {
+  it('updatePlanet - should not update if the name does not match', async () => {
 
     const planet = new PlanetUtils().getPlanet();
     const valuesToUpdate = new PlanetUpdateDto()
@@ -109,7 +109,7 @@ describe('MongoPlanetRepository Test', () => {
     
     await mongoPlanetRepository.insertPlanet(planet)
     
-    await expect(mongoPlanetRepository.updatePlanet('planetNotValid', valuesToUpdate)).resolves.toEqual(null)
+    await expect(mongoPlanetRepository.updatePlanet('planetNotValid', valuesToUpdate)).resolves.toEqual(undefined)
   })
 
 });

@@ -1,6 +1,6 @@
 export default () => ({
     app: {
-        port: parseInt(process.env.PORT, 10)
+        port: process.env.PORT ? parseInt(process.env.PORT, 10) : 3000
     },
     mongoose: {
         uri: process.env.MONGO_URI,

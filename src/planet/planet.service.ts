@@ -12,7 +12,7 @@ export class PlanetsService {
 
   private readonly logger = new Logger(PlanetsService.name);
   
-  async getPlanetByName(name: string): Promise<PlanetDto> {  
+  async getPlanetByName(name: string): Promise<PlanetDto | undefined> {  
       const result = await this.planetRepository.findPlanetByName(name)
       return result
   }
