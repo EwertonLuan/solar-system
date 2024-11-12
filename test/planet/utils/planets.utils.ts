@@ -1,5 +1,4 @@
-/* eslint-disable @typescript-eslint/no-empty-function */
-import { PlanetDto } from "../../../src/planet/model/planet.model.dto"
+ import { PlanetDto } from "../../../src/planet/model/planet.model.dto"
 
 export class PlanetUtils {
     public getPlanet(name = 'MERCURY') {
@@ -12,25 +11,18 @@ export class PlanetUtils {
 
         return planet
     }
-    
-    public cretePromise(): Promise<any>{
-        return new Promise((value) => {
-            return value
-        })
-    }
 }
 
 export class PlanetsRepositoryMock {            
     
     findAllPlanets(): Promise<PlanetDto[]> {
-        return new PlanetUtils().cretePromise()
+        return Promise.resolve([])
     }
     
-    insertPlanet(planet: PlanetDto){}
+    insertPlanet(){}
     
-    findPlanetByName(name: string): Promise<PlanetDto>{
-        return new PlanetUtils().cretePromise()
+    findPlanetByName(): Promise<PlanetDto>{
+        const planet = new PlanetUtils().getPlanet()
+        return Promise.resolve(planet)
     }
 }
-
-

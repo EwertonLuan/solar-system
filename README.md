@@ -68,8 +68,8 @@ $ docker run -e PORT=3000 -p 3000:3000 solar-system
 # unit tests
 $ npm run test
 
-# e2e tests
-$ npm run test:e2e
+# integration tests
+$ npm run test:integration
 
 # test coverage
 $ npm run test:cov
