@@ -6,7 +6,7 @@ This project retrieve and update information about the system solar planets.
 
 ## Dependencies
 ```
-node 12.x - Check Dockerfile
+node 20.x - Check Dockerfile
 ```
 
 ### Framework
@@ -80,8 +80,8 @@ $ npm run test:cov
 ### Swagger
 ```bash
 # Dev
-https://solar-system-service-env-dev.herokuapp.com/swagger
+http://localhost/swagger
 
 #Prod
-https://solar-system-service-env-prod.herokuapp.com/swagger
+http://localhost/swagger
 ```
